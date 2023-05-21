@@ -14,7 +14,7 @@ M.popup_diacritic_words = function()
   end
   local mappings = {
     -- ['['] = 'update_view(-1)',
-    ["<cr>"] = 'yiw:q<CR>"_xP',
+    ["<cr>"] = 'yiw:q<CR>vp',
   }
   M.floating_win(filtered, mappings)
 end
@@ -62,13 +62,14 @@ M.floating_win = function(tokens, keymap)
   }
 
   -- and finally create it with buffer attached
-  local win
-  win = vim.api.nvim_open_win(new_buf, true, opts)
+  -- local win
+  -- win = vim.api.nvim_open_win(new_buf, true, opts)
+  vim.api.nvim_open_win(new_buf, true, opts)
   vim.api.nvim_buf_set_lines(new_buf, 0, -1, false, tokens)
   -- customize highlighting
   -- vim.cmd [[highlight MyNormalFloat gui=italic guifg=#a0a8b0 guibg=#000000]]
   -- vim.api.nvim_win_set_option(win, "winhl", "NormalFloat:MyNormalFloat")
-  vim.api.nvim_win_set_option(win, "winhl", "NormalFloat:NormalFloat")
+  -- vim.api.nvim_win_set_option(win, "winhl", "NormalFloat:NormalFloat")
 end
 
 M.get_diacritic_words = function()
