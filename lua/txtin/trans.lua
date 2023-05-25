@@ -31,6 +31,10 @@ function transformations.number_lines(line1, line2)
   end
   vim.api.nvim_buf_set_lines(0, line1 - 1, line2, nil, newlines)
 end
+-- This is how to use this function from the command line. Note the -range
+-- syntax (needed for passing the range of a visual selection to a vim
+-- command).
+-- vim.cmd [[command! -range NumberLines lua require('txtin.trans').number_lines(<line1>, <line2>)]]
 
 function transformations.number_lines2()
   local line1 = vim.fn.line("v")
@@ -145,6 +149,10 @@ transformations.align_on_char = function(line1, line2)
   end
   vim.api.nvim_buf_set_lines(0, line1 - 1, line2, nil, newlines)
 end
+-- This command works from the command line. Doesn't seem to work when called
+-- from a shortcut. I'm leaving it here as a record of how to pass a visual
+-- range to a vim command.
+-- vim.cmd [[command! -range AlignOnChar lua require('txtin.trans').align_on_char(<line1>, <line2>)]]
 
 -- This works with calling from which-key, whereas align_on_char doesn't!?
 transformations.align_on_char2 = function()
