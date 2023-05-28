@@ -131,7 +131,7 @@ transformations.align_on_char = function(line1, line2)
   local longest = 0
   for i = 1, count, 1 do
     if lines[i]:find(char) then
-      P(lines[i])
+      -- P(lines[i])
       newlines[i] = vim.fn.split(lines[i], char)
       if #newlines[i][1] > longest then
         longest = #newlines[i][1]
