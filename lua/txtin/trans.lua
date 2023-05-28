@@ -1,8 +1,8 @@
 -- A collection of function to manipulate text.
 
-local transformations = {}
+local M = {}
 
-function transformations.para_to_lines()
+function M.para_to_lines()
   local current_line, _ = unpack(vim.api.nvim_win_get_cursor(0))
   vim.cmd("normal vip")
   local start_row
@@ -21,7 +21,7 @@ function transformations.para_to_lines()
   vim.api.nvim_win_set_cursor(0, { current_line, 0 })
 end
 
-function transformations.number_lines(line1, line2)
+function M.number_lines(line1, line2)
   local count = 1 + line2 - line1
   local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, false)
   local total = count
@@ -36,30 +36,43 @@ end
 -- command).
 -- vim.cmd [[command! -range NumberLines lua require('txtin.trans').number_lines(<line1>, <line2>)]]
 
-function transformations.number_lines2()
+function M.number_lines2()
   local line1 = vim.fn.line("v")
   local line2 = vim.fn.line(".")
   local count = 1 + line2 - line1
-  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, nil)
+  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, false)
   local total = count
   local newlines = {}
   for i = 1, total, 1 do
     newlines[i] = i .. "./ " .. lines[i]
   end
-  vim.api.nvim_buf_set_lines(0, line1 - 1, line2, nil, newlines)
-  transformations.collapse_selection()
+  vim.api.nvim_buf_set_lines(0, line1 - 1, line2, false, newlines)
+  M.collapse_selection()
 end
 
-function transformations.collapse_selection()
+function M.collapse_selection()
   local key = vim.api.nvim_replace_termcodes("<esc>", true, false, true)
   vim.api.nvim_feedkeys(key, "v", true)
 end
 
-function transformations.clear_echo_area()
+function M.renumber_lines(line1, line2)
+  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, false)
+  local newlines = {}
+  local i = vim.fn.input("Input starting number: ", "1")
+  for _, line in ipairs(lines) do
+    local newline = vim.fn.substitute(line, "\\d\\.\\/ ", '', '')
+    newline = i .. "./ " .. newline
+    i = i + 1
+    table.insert(newlines, newline)
+  end
+  vim.api.nvim_buf_set_lines(0, line1 - 1, line2, false, newlines)
+end
+
+function M.clear_echo_area()
   vim.api.nvim_feedkeys(":", "nx", true)
 end
 
-function transformations.shorten_dictionary_entries()
+function M.shorten_dictionary_entries()
   -- shorten domina, dominae f. to domina 1f.
   vim.cmd([[silent %s/\(\w\{-}\),\s\1e\s\(f\.\)/\1 1\2/e]])
   -- shorten amicus, amici m. to amicus 2m.
@@ -103,7 +116,7 @@ function transformations.shorten_dictionary_entries()
   vim.cmd([[silent %s/: I/:/e]])
 end
 
-function transformations.join_lines(line1, line2)
+function M.join_lines(line1, line2)
   local count = 1 + line2 - line1
   if count % 2 ~= 0 then
     print("You must select an even number of lines.")
@@ -118,12 +131,12 @@ function transformations.join_lines(line1, line2)
   vim.api.nvim_buf_set_lines(0, line1 - 1, line2, nil, newlines)
 end
 
-function transformations.eval_line()
+function M.eval_line()
   local line = vim.api.nvim_get_current_line()
   vim.cmd("lua " .. line)
 end
 
-transformations.align_on_char = function(line1, line2)
+M.align_on_char = function(line1, line2)
   local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, nil)
   local count = 1 + line2 - line1
   local char = vim.fn.input("Enter character to align on: ")
@@ -155,15 +168,15 @@ end
 -- vim.cmd [[command! -range AlignOnChar lua require('txtin.trans').align_on_char(<line1>, <line2>)]]
 
 -- This works with calling from which-key, whereas align_on_char doesn't!?
-transformations.align_on_char2 = function()
+M.align_on_char2 = function()
   local line1 = vim.fn.line("v")
   local line2 = vim.fn.line(".")
-  transformations.align_on_char(line1, line2)
-  transformations.collapse_selection()
-  transformations.clear_echo_area()
+  M.align_on_char(line1, line2)
+  M.collapse_selection()
+  M.clear_echo_area()
 end
 
-transformations.keep_lines = function()
+M.keep_lines = function()
   local rng = ""
   if vim.fn.mode() == "V" then
     local line1 = vim.fn.line("v")
@@ -176,7 +189,7 @@ transformations.keep_lines = function()
   vim.opt.hlsearch = false
 end
 
-transformations.flush_lines = function()
+M.flush_lines = function()
   local rng = ""
   if vim.fn.mode() == "V" then
     local line1 = vim.fn.line("v")
@@ -189,7 +202,7 @@ transformations.flush_lines = function()
   vim.opt.hlsearch = false
 end
 
-transformations.flush_empty_lines = function()
+M.flush_empty_lines = function()
   local rng = ""
   if vim.fn.mode() == "V" then
     local line1 = vim.fn.line("v")
@@ -201,7 +214,7 @@ transformations.flush_empty_lines = function()
 end
 
 
-transformations.buffer_to_list = function()
+M.buffer_to_list = function()
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, nil)
   local tokens = {}
   local words = {}
@@ -222,4 +235,4 @@ transformations.buffer_to_list = function()
 end
 
 
-return transformations
+return M

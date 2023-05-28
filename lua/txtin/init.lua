@@ -23,6 +23,10 @@ M.setup = function()
     require('txtin.trans').number_lines(opts.line1, opts.line2)
   end, { range = true })
 
+  cmd('RenumberLines', function(opts)
+    require('txtin.trans').renumber_lines(opts.line1, opts.line2)
+  end, { range = true })
+
   cmd('AlignOnChar', function(opts)
     require('txtin.trans').align_on_char(opts.line1, opts.line2)
   end, { range = true })
