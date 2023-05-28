@@ -23,13 +23,13 @@ end
 
 function transformations.number_lines(line1, line2)
   local count = 1 + line2 - line1
-  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, nil)
+  local lines = vim.api.nvim_buf_get_lines(0, line1 - 1, line2, false)
   local total = count
   local newlines = {}
   for i = 1, total, 1 do
     newlines[i] = i .. "./ " .. lines[i]
   end
-  vim.api.nvim_buf_set_lines(0, line1 - 1, line2, nil, newlines)
+  vim.api.nvim_buf_set_lines(0, line1 - 1, line2, false, newlines)
 end
 -- This is how to use this function from the command line. Note the -range
 -- syntax (needed for passing the range of a visual selection to a vim
