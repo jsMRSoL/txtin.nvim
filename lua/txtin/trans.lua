@@ -60,7 +60,7 @@ function M.renumber_lines(line1, line2)
   local newlines = {}
   local i = vim.fn.input("Input starting number: ", "1")
   for _, line in ipairs(lines) do
-    local newline = vim.fn.substitute(line, "\\d\\.\\/ ", '', '')
+    local newline = vim.fn.substitute(line, "\\d*\\.\\/ ", '', '')
     newline = i .. "./ " .. newline
     i = i + 1
     table.insert(newlines, newline)
